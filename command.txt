@@ -1,6 +1,9 @@
 -------------------------------------------------------------------
 ATTACK (RED)
 -------------------------------------------------------------------
+Remove rule from the firewall
+
+Ping to make sure it works
 
 Attacker Login
 
@@ -32,7 +35,10 @@ Reverse Shell Rule(s):
 
     alert tcp any any -> 10.30.0.235 21 (msg:"Possible Reverse Shell Attack Detected - Port 21";flow:to_server,established;content:"USER ";nocase;pcre:"/^USER\s+[^\r\n]*:\)\r?$/smi";sid:1000002;rev:1)
     
-    alert tcp any any -> 10.30.0.235 6200 (msg:"Possible Reverse Shell Attack Detected - Port 6200";flow:to_server,established;classtype:shellcode-detect;sid:1000003;rev:1)    
+    alert tcp any any -> 10.30.0.235 6200 (msg:"Possible Reverse Shell Attack Detected - Port 6200";flow:to_server,established;sid:1000003;rev:1)    
+
+    /bin/sh or /bin/bash
+
 
 -------------------------------------------------------------------
  
