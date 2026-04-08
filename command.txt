@@ -29,6 +29,10 @@ DEFEND (BLUE)
 In DMZ interface, remove all extra "LANDM Categories"
 
 SQLi Rule(s): 
+    alert tcp any any -> 10.30.0.235 80 (msg: “SQLi attack  detected”; pcre:“/^GET\s(\d*|\D*|\s)\?id=%27OR\+%271%27%3D%271/m”;sid:1000001;rev:1;)
+
+    alert tcp any any -> 10.30.0.235 80 (content:"/";http_uri;flow:to_server,established;pcre:"/('|%27)(\s|%20|\+)*or(\s|%20|\+)*('|%27)1('|%27)(\s|%20|\+)*(=|%3D)(\s|%20|\+)*('|%27)1/i";msg:"Possible SQL Injection Attack Detected";sid:1000001;rev:1)
+
     alert tcp any any -> 10.30.0.235 80 (pcre:”/ id\=\%(\d|\D){2}OR\+\%(\d|\D){2}\d+\%(\d|\D){2}\%3D/”;msg:”SQLi alert!”;sid:1000006;rev:1;)
 
     alert tcp any any -> 10.30.0.235 80 (content:"User-Agent: sqlmap"; msg:"sqlmap detected";sid:1000005;rev:1)
