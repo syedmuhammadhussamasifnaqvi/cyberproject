@@ -32,12 +32,9 @@ In DMZ interface, remove all extra "LANDM Categories"
 
 Reverse Shell Rule(s):
 
-    alert tcp any any -> 10.30.0.235 21 (msg:"Possible Reverse Shell Attack Detected - Port 21";flow:to_server,established;content:"USER ";nocase;pcre:"/^USER\s+[^\r\n]*:\)\r?$/smi";sid:1000033;rev:1)
-    
-    alert tcp any any -> 10.30.0.235 6200 (msg:"Possible Reverse Shell Attack Detected - Port 6200";flow:to_server,established;sid:1000044;rev:1)    
-
-    /bin/sh or /bin/bash
-
+    alert tcp any any -> 10.30.0.235 21 (msg:"VSFTPD backdoor trigger attempt"; flow:to_server,established; content:"USER "; nocase; pcre:"/^USER\s+[^\r\n]*:\)\r?$/mi"; sid:1000101; rev:1;)
+    alert tcp any any -> 10.30.0.235 6200 (msg:"VSFTPD backdoor shell access"; flow:to_server,established; sid:1000102; rev:1;)
+    alert tcp 10.30.0.235 any -> any any (msg:"Linux reverse shell command string detected"; flow:to_server,established; pcre:"/(\/bin\/sh|\/bin\/bash|\/bin\/dash|sh -i|bash -i)/i"; sid:1000104; rev:2;)
 
 -------------------------------------------------------------------
 RED - ATTACK (Reverse Shell)
