@@ -3,27 +3,33 @@ https://raw.githubusercontent.com/syedmuhammadhussamasifnaqvi/cyberproject/main/
 -------------------------------------------------------------------
 RED - ATTACK (Stored XSS)
 -------------------------------------------------------------------
-Remove rule from the firewall
+Remove rule from the firewall (Blue VM)
+    Services -> Snort -> LANDMZ -> Edit -> LANDM Categories -> Unselect All -> Save
+    Services -> Snort -> LANDMZ -> Edit -> LANDM Rules -> Custom Rules
 
-Ping to make sure it works
+On desktop 1: 
+    Open command.txt in visual editor
 
-Attacker Login
+On desktop 2: Ping 10.30.0.235 to make sure victim VM is up
 
-Change security to low
+On Desktop 1: 
+    open DVWA website: http://10.30.0.235/dvwa as attacker and login
 
-Inject Payload
-    <script>console.log(document.cookie)</script>
+    Change security to low
+    
+    Go to XSS store -> Inject Payload
+        <script>console.log(document.cookie)</script>
 
-Logout
+    Attacker Logs out
 
-New user logs in
+    Victim logs in
 
-Go to XSS page
+    Go to XSS Stored page
 
-Script is executed, cookie is sent to attacker (copy it manually for now)
+    Script is executed, cookie is sent to attacker (copy it manually for now)
 
-Attacker user his machine to add a comment using cookie
-    curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
+    Attacker user his machine to add a comment using cookie
+        curl -X POST -b "security=low; PHPSESSID=9ecc84081433870a847d9c096762a91f" -d "txtName=WhoAmI&mtxMessage=You%27ve+been+hacked&btnSign=Sign+Guestbook" http://10.30.0.235/dvwa/vulnerabilities/xss_s/
 
 -------------------------------------------------------------------
 BLUE - DEFEND (Reverse Shell)
